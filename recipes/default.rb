@@ -36,10 +36,6 @@ package "Installing unzip" do
 	action :install
 end
 
-#execute "Copying latest.zip" do
-#	command 'cp latest.zip /tmp/latest.zip'
-#end
-
 execute "Unzipping latest to html folder" do
 	command 'sudo unzip /tmp/latest.zip -d /var/www/html'
 	not_if {File.exists?("/var/www/html/wordpress/index.php")}	
