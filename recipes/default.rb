@@ -6,10 +6,6 @@ service "apache2" do
 	action :start
 end
 
-#execute "service apache2 start" do
-#	command 'sudo service apache2 start'
-#end
-
 packages = ['mysql-server','mysql-client','php','libapache2-mod-php','php-mcrypt','php-mysql'] 
 packages.each do |package|
 	apt_package package do
@@ -24,10 +20,6 @@ end
 execute "download mysqlcommands" do
 	command 'wget https://gitlab.com/roybhaskar9/devops/raw/master/coding/chef/chefwordpress/files/default/mysqlcommands -O /tmp/mysqlcommands'
 end
-
-#execute "sudo cp mysqlcommands /tmp/mysqlcommands" do
-#	command 'sudo cp mysqlcommands /tmp/mysqlcommands'
-#end
 
 execute "creating database" do
 	command 'mysql -uroot -prootpassword < /tmp/mysqlcommands && touch /tmp/databasecreated'
@@ -60,13 +52,7 @@ end
 
 execute "Copying wp-config-sample.php" do
 	command 'cp /tmp/wp-config-sample.php /var/www/html/wordpress/wp-config.php'
-	
 end
-
-
-#execute "Copying wp-config-sample.php to wordpress folder" do
-#	command 'sudo cp wp-config-sample.php /var/www/html/wordpress/wp-config.php'
-#end
 
 execute "Setting permission on wordpress folder" do
 	command 'sudo chmod -R 775 /var/www/html/wordpress'
