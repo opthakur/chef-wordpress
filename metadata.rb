@@ -1,4 +1,4 @@
-name 'mycookbook'
+name 'project'
 description 'A basic starter cookbook'
 version '2.0.0'
 maintainer 'Awesome Company, Inc.'

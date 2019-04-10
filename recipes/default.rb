@@ -21,17 +21,17 @@ execute "reset mysqladmin root password" do
 	command 'mysqladmin -u root password rootpassword'
 end
 
-remote_file "download mysqlcommands" do
-	source 'https://gitlab.com/roybhaskar9/devops/raw/master/coding/chef/chefwordpress/files/default/mysqlcommands'
-	path '/tmp/mysqlcommands'
+execute "download mysqlcommands" do
+	command 'wget https://gitlab.com/roybhaskar9/devops/raw/master/coding/chef/chefwordpress/files/default/mysqlcommands -O /tmp/mysqlcommands'
 end
 
 #execute "sudo cp mysqlcommands /tmp/mysqlcommands" do
 #	command 'sudo cp mysqlcommands /tmp/mysqlcommands'
 #end
 
-execute "mysql -uroot -prootpassword < /tmp/mysqlcommands" do
-	command 'mysql -uroot -prootpassword < /tmp/mysqlcommands'
+execute "creating database" do
+	command 'mysql -uroot -prootpassword < /tmp/mysqlcommands && touch /tmp/databasecreated'
+        not_if {File.exists?("/tmp/databasecreated")} 
 end
 
 remote_file "Downloading wordpress" do
@@ -50,18 +50,19 @@ end
 
 execute "Unzipping latest to html folder" do
 	command 'sudo unzip /tmp/latest.zip -d /var/www/html'
+	not_if {File.exists?("/var/www/html/wordpress/index.php")}	
 end
 
-remote_file "Downloading wp-config-sample.php" do
-	source 'https://gitlab.com/roybhaskar9/devops/raw/master/coding/chef/chefwordpress/files/default/wp-config-sample.php'
-	path '/tmp/wp-config-sample.php'
+execute "Downloading wp-config-sample.php" do
+	command 'wget https://gitlab.com/roybhaskar9/devops/raw/master/coding/chef/chefwordpress/files/default/wp-config-sample.php -O /tmp/wp-config-sample.php'
 end
 
-file "Copying wp-config-sample.php" do
-	content IO.read('/tmp/wp-config-sample.php')
-	path '/var/www/html/wordpress/wp-config.php'
-	action :create
+
+execute "Copying wp-config-sample.php" do
+	command 'cp /tmp/wp-config-sample.php /var/www/html/wordpress/wp-config.php'
+	
 end
+
 
 #execute "Copying wp-config-sample.php to wordpress folder" do
 #	command 'sudo cp wp-config-sample.php /var/www/html/wordpress/wp-config.php'
